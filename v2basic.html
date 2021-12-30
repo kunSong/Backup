@@ -1,0 +1,242 @@
+<html>
+
+<head>
+	<meta charset="utf-8">
+</head>
+
+<body>
+	<div>
+		<h3>注意事项</h3>
+		<p>如果代码写的不对有warning，那些模板表达式不会被渲染</p>
+	</div>
+    <div id="app">
+        <div>
+			<div>
+				<h3>Mustache语法</h3>
+				<p>var app = new Vue({el:'#app', data:{info:''}})</p>
+				<p>利用Mustache语法会将data对象属性绑定到双括号内对应属性名，但是不能作用在html attribute上</p>
+				<p>绑定到data上的属性一开始初始化就会进入响应的监听，但之后新增加的属性不会，需要重新刷新</p>
+				<p>通过app.info修改会反映到data对象上，反之亦然</p>
+				<p>模板表达式都是被放在沙盒中(一个相对安全不会被破坏的隔离环境中)，只能访问白名单的全局对象例如Math，Date，不能访问用户定义的全局变量</p>
+				<p>在Mustache括号中和v-bind等值中都支持JS单条语句执行，但不支持表达式和循环控制等</p>
+				<h3>计算属性 缓存 监听</h3>
+				<p>可以将模板表达式中负责逻辑语句放到Vue对象computed对象中实现函数reversedInfo</p>
+				<p>reversedInfo完全依赖info属性（响应式更新可以替代watch），如果通过app.info修改，也会反映到各个地方的reversedInfo</p>
+				<p>reversedInfo是没有副作用的（输出完全依赖输入），且方法绑定，默认没有setter方法，无法通过app.reversedInfo修改</p>
+				<p>也可以提供setter方法</p>
+				<p>computed（计算属性）依赖响应式缓存，如果info没有变，直接返回缓存不执行计算</p>
+				<p>computed（计算属性）依赖的不是响应式的数据，那就会缓存，不再重新执行逻辑代码</p>
+				<p>methods中定义方法同样可以得到相同的效果，但是每次都会执行，不缓存</p>
+			</div>
+            <p v-bind:style="style">测试请在下面输入框中输入试试 {{ info }}</p>
+			<p v-bind:style="style">通过computed（计算属性）输入的东西反转了 {{ reversedInfo }}</p>
+			<p v-bind:style="style">通过computed（计算属性）输入的东西反转了（测试缓存输出）{{ reversedInfo }}</p>
+			<p v-bind:style="style">通过methods（方法）输入的东西反转了 {{ reversedMethodsInfo() }}</p>
+			<p v-bind:style="style">通过methods（方法）输入的东西反转了（会调用两次）{{ reversedMethodsInfo() }}</p>
+			<p v-bind:style="style">通过computed（计算属性）时刻 {{ now }}</p>
+			<p v-bind:style="style">通过computed（计算属性）时刻（不是响应式的，会缓存，不再去获取新的时间）{{ now }}</p>
+        </div>
+        <div>
+            <h3>v-bind:title来绑定html attribute，是从Vue对象中获取对应值</h3>
+            <p>如果通过document.getElementXXX来找到元素并修改属性，并不会反映到Vue对象中的值上</p>
+            <span id="spin" v-bind:title="message">鼠标悬停几秒查看动态绑定的信息</span>
+			<p>@vue2.6.0 支持动态参数 v-bind:[linkAttribute]="link"</p>
+			<p>linkAttribute会以小写的形式在去寻找Vue对象data中的属性值此处为href，同时支持JS动态求值，但是不支持添加引号会警告</p>
+			<p>v-bind:[eventName]就可以动态绑定事件了，null值为移除绑定，并警告</p>
+			<p>v-bind缩写 :href="url" :[linkAttribute]="url"</p>
+			<p><a v-bind:[linkAttribute]="url">动态参数</a></p>
+        </div>
+        <div>
+            <h3>v-on:click="handleClick" 响应事件的处理函数，放在Vue对象的methods对象中</h3>
+            <p>输入框中的用户输入通过v-model向Vue对象中的info填充值，修改app.info同时也会渲染到页面上</p>
+            <p>直接定义button上的disabled属性不管是什么值，都是将submit置灰无法点击</p>
+            <p>v-bind:disabled 如果为true置灰无法点击，为false，null，undefined都是可以点击</p>
+			<p>v-on:submit.prevent 可以增加修饰符，不是很懂</p>
+			<p>v-on:缩写 @click="doSomethind" @[event]="doSomething"</p>
+            <p>
+				请输入姓名
+				<input type="text" v-model="info" />
+            </p>
+            <button v-on:click="handleClick" v-bind:disabled="disabled">submit</button>
+        </div>
+        <div>
+            <h3>v-for</h3>
+            <ul>
+                <li v-for="item in list">{{item.text}}</li>
+            </ul>
+        </div>
+        <div>
+            <h3>v-if</h3>
+            <p v-if="seen">现在你看到我了</p>
+        </div>
+        <div>
+          <h3>Vue.component</h3>
+          <!-- <select> -->
+          <ol>
+            <!-- <option>Volvo</option>       -->
+            <!-- <option value="audi">Audi</option>  -->
+            <my-option 
+                v-for="item in carList"
+                v-bind:car="item"
+                v-bind:key="item">
+            </my-option>
+          </ol>
+          <!-- </select>   -->
+        </div>
+        <div>
+            <h3 v-once>v-once {{onceInfo}}</h3>
+        </div>
+        <div>
+            <h3>v-html="rawHtml 会渲染html内容会有XSS风险，请使用Mustache语法</h3>
+            <h3>rawHtml</h3>
+            <p>{{rawHtml}}</p>
+            <p v-html="rawHtml"></p>
+        </div>
+    </div>
+	<div>
+		<h3>watch属性</h3>
+		<p>适用于耗时操作或异步操作，对属性修改的监听</p>
+		<p>如果watch-question嵌套在app标签下，会去app的Vue对象中找定义的data属性，因为没有会报警告</p>
+	</div>
+	<div id="watch-question">
+		<p>
+			请输入问题
+			<input type="text" v-model="question"/>
+			<p>Answer: {{ answer }}</p>
+		</p>
+	</div>
+	<!-- Vue2.x -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+	<!-- ajax -->
+	<script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+	<!-- 通用工具 -->
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+    <script>
+        Vue.component('my-option', {
+            props: ['car'],
+            template: '<li>{{car}}</li>'
+        });
+        var app = new Vue({
+            el: '#app',
+            data: {
+                info: '',
+                list: [],
+                carList: ['volvo', 'sabra'],
+                message: '页面加载于 ' + new Date().toLocaleString(),
+                seen: true,
+                onceInfo: 'Oops once',
+                rawHtml: '<span style="color: red">XSS</span>',
+                disabled: false,
+				linkattribute: 'href',
+				url: 'https://cn.vuejs.org/v2/guide/syntax.html#动态参数',
+				style: 'color: red',
+				debug: false
+            },
+            methods: {
+                handleClick: function () {
+					if(this.debug) {
+						console.log(this.info);
+					}
+                    this.list.push({text: reverse(this.info)});
+                    this.info = '';
+                    this.onceInfo = "Oops twice";
+                },
+				reversedMethodsInfo: function () {
+					if(this.debug){
+						console.log("reversedMethodsInfo");
+					}
+					return this.info.split('').reverse().join('');
+				}
+            },
+			computed: {
+				reversedInfo: {
+					get: function() {
+						if(this.debug){
+							console.log("reversedInfo");
+						}
+						return this.info.split('').reverse().join('');
+					},
+					set: function(val) {
+						this.info = val.split('').reverse().join('');
+					} 
+				},
+				now: function() {
+					if(this.debug){
+						console.log("getNow");
+					}
+					return Date.now();
+				}
+			},
+            created: function() {
+                if(this.debug){
+					console.log("created invoke " + this.carlist);
+                }
+            },
+            mounted: function() {
+                if(this.debug){
+					console.log("mounted invoke " + this.el);
+                }     
+            }
+        });
+
+        var reverse = function(str) {
+            return str.split('').reverse().join('');
+        }
+		
+		var watchQuestion = new Vue({
+			el: '#watch-question',
+			data: {
+				debug: true,
+				question: '',
+				answer: ''
+			},
+			watch: {
+				question: function(oldquestion, newquestion) {
+					if(this.debug) {
+						console.log("old " + oldquestion + " new " + newquestion);
+					}
+					// watch question的变化，oldquestion是第一个输入，newquestion是之后的增量，总比old少一个字符
+					// 真正调用的地方，当第一个触发question变化的事件到来时就会调用
+					// 会在声明的5000ms之后调用getAnswer，底层原理是setTimeout的异步调用
+					// 在getAnswer中获得用户最终输入的question
+					this.debouncedGetAnswer();
+					
+				}
+			},
+			created: function(){
+				if(this.debug) {
+					console.log("watch-question created");
+				}
+				// 使用是lodash的_.debounce函数，类似的还有_.throttle
+				// https://lodash.com/docs#debounce
+				// 类似的underscore中也有_.debounce函数
+				// 这个函数仅做一些回调函数的声明和参数的初始化，并返回闭包
+				this.debouncedGetAnswer = _.debounce(this.getAnswer, 5000);
+			},
+			methods: {
+				getAnswer: function() {
+					// 获取用户最终输入
+					if(this.debug) {
+						console.log(this.question);
+					}
+					var vm = this;
+					// ajax异步Promise调用
+					axios.get('https://yesno.wtf/api')
+						.then(function(result) {
+							if(vm.debug){
+								console.log(result);
+							}
+						})
+						.catch(function(error) {
+							if(vm.debug){
+								console.log(error);
+							}
+						});
+				}
+			}
+		});
+		
+    </script>
+</body>
+
+</html>
