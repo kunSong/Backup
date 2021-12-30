@@ -13,6 +13,7 @@
         <div>
 			<div>
 				<h3>Mustache语法</h3>
+				<!--
 				<p>var app = new Vue({el:'#app', data:{info:''}})</p>
 				<p>利用Mustache语法会将data对象属性绑定到双括号内对应属性名，但是不能作用在html attribute上</p>
 				<p>绑定到data上的属性一开始初始化就会进入响应的监听，但之后新增加的属性不会，需要重新刷新</p>
@@ -27,6 +28,7 @@
 				<p>computed（计算属性）依赖响应式缓存，如果info没有变，直接返回缓存不执行计算</p>
 				<p>computed（计算属性）依赖的不是响应式的数据，那就会缓存，不再重新执行逻辑代码</p>
 				<p>methods中定义方法同样可以得到相同的效果，但是每次都会执行，不缓存</p>
+				-->
 			</div>
             <p v-bind:style="style">测试请在下面输入框中输入试试 {{ info }}</p>
 			<p v-bind:style="style">通过computed（计算属性）输入的东西反转了 {{ reversedInfo }}</p>
