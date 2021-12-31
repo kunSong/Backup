@@ -2,6 +2,7 @@
 
 <head>
 	<meta charset="utf-8">
+	<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -13,7 +14,6 @@
         <div>
 			<div>
 				<h3>Mustache语法</h3>
-				<!--
 				<p>var app = new Vue({el:'#app', data:{info:''}})</p>
 				<p>利用Mustache语法会将data对象属性绑定到双括号内对应属性名，但是不能作用在html attribute上</p>
 				<p>绑定到data上的属性一开始初始化就会进入响应的监听，但之后新增加的属性不会，需要重新刷新</p>
@@ -28,7 +28,6 @@
 				<p>computed（计算属性）依赖响应式缓存，如果info没有变，直接返回缓存不执行计算</p>
 				<p>computed（计算属性）依赖的不是响应式的数据，那就会缓存，不再重新执行逻辑代码</p>
 				<p>methods中定义方法同样可以得到相同的效果，但是每次都会执行，不缓存</p>
-				-->
 			</div>
             <p v-bind:style="style">测试请在下面输入框中输入试试 {{ info }}</p>
 			<p v-bind:style="style">通过computed（计算属性）输入的东西反转了 {{ reversedInfo }}</p>
@@ -39,15 +38,33 @@
 			<p v-bind:style="style">通过computed（计算属性）时刻（不是响应式的，会缓存，不再去获取新的时间）{{ now }}</p>
         </div>
         <div>
-            <h3>v-bind:title来绑定html attribute，是从Vue对象中获取对应值</h3>
+            <h3>v-bind:title是绑定html标签attribute键，是从Vue对象中获取对应值</h3>
             <p>如果通过document.getElementXXX来找到元素并修改属性，并不会反映到Vue对象中的值上</p>
             <span id="spin" v-bind:title="message">鼠标悬停几秒查看动态绑定的信息</span>
 			<p>@vue2.6.0 支持动态参数 v-bind:[linkAttribute]="link"</p>
-			<p>linkAttribute会以小写的形式在去寻找Vue对象data中的属性值此处为href，同时支持JS动态求值，但是不支持添加引号会警告</p>
+			<p>linkAttribute会以小写的形式在去寻找Vue对象data中的属性键名，此处为href，同时支持JS动态求值，但是不支持添加引号会警告</p>
 			<p>v-bind:[eventName]就可以动态绑定事件了，null值为移除绑定，并警告</p>
 			<p>v-bind缩写 :href="url" :[linkAttribute]="url"</p>
 			<p><a v-bind:[linkAttribute]="url">动态参数</a></p>
         </div>
+		<div>
+			<h3>v-bind:class 动态增减class属性值，应对style的渲染</h3>
+			<p>class属性值绑定方式：对象内联、对象、计算属性返回对象、数组（支持三元表达式和对象）</p>
+			<p>可以和静态class混入</p>
+			<p>在组件上同样适用以上规则</p>
+			<p>v-bind:style 绑定内联style属性和class属性值绑定类似的，但其实是Javascript对象</p>
+			<p>CSS property 名可以用驼峰式 (camelCase) 或短横线分隔 (kebab-case，记得用引号括起来) 来命名</p>
+			<p>支持浏览器前缀的property值</p>
+			<div class="container">
+				<!-- <p class="danger" v-bind:class="{ item: isActive }"><span class="item"></span>Danger</p> -->
+				<!-- <p class="danger" v-bind:class="classObject"><span class="item"></span>Danger</p> -->
+				<!-- <p class="danger" v-bind:class="computedClass"><span class="item"></span>Danger</p> -->
+				<!-- <p v-bind:class="[dangerClass, itemClass]"><span class="item"></span>Danger</p> -->
+				<!-- <p v-bind:class="[isActive ? dangerClass : '', itemClass]"><span class="item"></span>Danger</p> -->
+				<p v-bind:class="[{danger: isActive}, itemClass]"><span class="item"></span>Danger</p>
+				<p v-bind:style="{ color: 'green' }">Safe</p>
+			</div>
+		</div>
         <div>
             <h3>v-on:click="handleClick" 响应事件的处理函数，放在Vue对象的methods对象中</h3>
             <p>输入框中的用户输入通过v-model向Vue对象中的info填充值，修改app.info同时也会渲染到页面上</p>
@@ -132,7 +149,13 @@
 				linkattribute: 'href',
 				url: 'https://cn.vuejs.org/v2/guide/syntax.html#动态参数',
 				style: 'color: red',
-				debug: false
+				debug: false,
+				isActive: true,
+				classObject: {
+					item: true
+				},
+				dangerClass: 'danger',
+				itemClass: 'item'
             },
             methods: {
                 handleClick: function () {
@@ -167,6 +190,11 @@
 						console.log("getNow");
 					}
 					return Date.now();
+				},
+				computedClass: function() {
+					return {
+						item: true
+					}
 				}
 			},
             created: function() {
@@ -228,6 +256,7 @@
 							if(vm.debug){
 								console.log(result);
 							}
+							vm.answer = result.data.answer;
 						})
 						.catch(function(error) {
 							if(vm.debug){
