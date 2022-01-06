@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book id="1" id2="2">
+    <!--我是宋坤-->
+    <name>Java核心技术</name>
+    <!--sdfsdf-->
+    <author>Cay S. Horstmann</author>
+    <isbn lang="CN">1234567</isbn>
+    <tags>
+        <tag>Java</tag>
+        <tag>Network</tag>
+    </tags>
+    <pubDate/>
+</book>
