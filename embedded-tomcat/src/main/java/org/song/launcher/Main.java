@@ -76,7 +76,9 @@ public class Main {
         } else {
             resourceSet = new EmptyResourceSet(resources);
         }
+        WebResourceSet resourceSet2 = new DirResourceSet(resources, "/WEB-INF/templates", additionWebInfClassesFolder.getAbsolutePath() + "/templates", "/");
         resources.addPreResources(resourceSet);
+        resources.addPreResources(resourceSet2);
         ctx.setResources(resources);
 
         tomcat.start();
